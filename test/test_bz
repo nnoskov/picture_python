@@ -73,12 +73,12 @@ if __name__ == "__main__":
         splined_cv = bspline(cv, n=len(cv) * mult, d=2, closed=True)
         splined_cv = [[v[0], v[1]] for v in splined_cv]
         orig_cv = [[v[0], v[1]] for v in cv]
-        brushColor("#dee9af");
-        penColor("black");
+        brushColor("#dee9af")
+        penColor("black")
         penSize(1)
         polyline(splined_cv)
 
-    penColor("red");
+    penColor("red")
     penSize(2)
     orig_cv.append(orig_cv[0])
     polyline(orig_cv)
