@@ -1,6 +1,4 @@
-import bezier
 from graph import *
-import numpy as np
 
 
 def motion(event):
