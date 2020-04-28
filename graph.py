@@ -350,6 +350,21 @@ def polygon(points):
     return plg
 
 
+def curved_polygon(points, **polygon_opts):
+    _C = canvas()
+    coord = unpackCoord(points)
+    if points[0] != points[-1]:
+        points.append(points[0])
+    tk_opts = {"outline": penColor(),
+               "width": penSize(),
+               "fill": brushColor()}
+    for _key in ["smooth", "splinesteps"]:
+        if _key in polygon_opts.keys():
+            tk_opts[_key] = polygon_opts[_key]
+    plg = _C.create_polygon(*coord, tk_opts)
+    return plg
+
+
 def image(x, y, fileName, anchor=NW, **kwargs):
     if type(x) == tuple:
         fileName = y
