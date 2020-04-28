@@ -2,6 +2,7 @@
 from sys import platform
 import tkinter
 from random import randint
+
 try:
     from PIL import ImageTk, Image
 except Exception:
@@ -96,6 +97,7 @@ E = tkinter.E
 SW = tkinter.SW
 S = tkinter.S
 SE = tkinter.SE
+PIESLICE = tkinter.PIESLICE
 
 
 class onTimerCall():
@@ -118,8 +120,8 @@ def __initGraph__():
     _Cw = DEF_GRAPH_WIDTH
     _Ch = DEF_GRAPH_HEIGHT
     _C = tkinter.Canvas(
-            _win, background='white', bd=0,
-            highlightthickness=1, width=_Cw, height=_Ch
+        _win, background='white', bd=0,
+        highlightthickness=1, width=_Cw, height=_Ch
     )
     _Cpos = [0, 0]
     _C.place(x=_Cpos[0], y=_Cpos[1])
@@ -165,7 +167,7 @@ def pointInView(x, y):
 
 def circleInView(x, y, r):
     w, h = windowSize()
-    return (x > r and y > r and x < w-r and y < h-r)
+    return (x > r and y > r and x < w - r and y < h - r)
 
 
 def windowSize(w=-1, h=-1):
@@ -234,8 +236,8 @@ def transformCoord(x, y):
     if _viewPort:
         x1, x2, y1, y2 = _viewPort
         w, h = windowSize()
-        x = (x - x1)*w/(x2 - x1)
-        y = (y2 - y)*h/(y2 - y1)
+        x = (x - x1) * w / (x2 - x1)
+        y = (y2 - y) * h / (y2 - y1)
     return x, y
 
 
@@ -253,8 +255,8 @@ def lineTo(x, y=-1):
         x, y = x
     x, y = transformCoord(x, y)
     line = _C.create_line(
-            _pos[0], _pos[1], x, y,
-            fill=_penColor, width=_penSize
+        _pos[0], _pos[1], x, y,
+        fill=_penColor, width=_penSize
     )
     _pos = (x, y)
     return line
@@ -265,7 +267,7 @@ def point(x, y, col=-1):
     if col != -1:
         penColor(col)
     moveTo(x, y)
-    pt = lineTo(x+1, y)
+    pt = lineTo(x + 1, y)
     penColor(old_col)
     return pt
 
@@ -295,8 +297,8 @@ def rectangle(x1, y1, x2, y2):
     x1, y1 = transformCoord(x1, y1)
     x2, y2 = transformCoord(x2, y2)
     rect = _C.create_rectangle(
-            x1, y1, x2, y2,
-            outline=_penColor, width=_penSize, fill=_brushColor
+        x1, y1, x2, y2,
+        outline=_penColor, width=_penSize, fill=_brushColor
     )
     return rect
 
@@ -309,10 +311,32 @@ def circle(x, y, R):
     x1, y1 = transformCoord(x1, y1)
     x2, y2 = transformCoord(x2, y2)
     circ = _C.create_oval(
-            x1, y1, x2, y2,
-            outline=_penColor, width=_penSize, fill=_brushColor
+        x1, y1, x2, y2,
+        outline=_penColor, width=_penSize, fill=_brushColor
     )
     return circ
+
+
+def oval(x1, y1, x2, y2):
+    x1, y1 = transformCoord(x1, y1)
+    x2, y2 = transformCoord(x2, y2)
+    _oval = _C.create_oval(x1, y1, x2, y2,
+                           outline=_penColor,
+                           width=_penSize,
+                           fill=_brushColor)
+    return _oval
+
+
+def arc(x1, y1, x2, y2, start, end, style=PIESLICE):
+    x1, y1 = transformCoord(x1, y1)
+    x2, y2 = transformCoord(x2, y2)
+    _arc = _C.create_arc(x1, y1, x2, y2,
+                         start=start, extent=end - start,
+                         style=style,
+                         outline=_penColor,
+                         width=_penSize,
+                         fill=_brushColor)
+    return _arc
 
 
 def polygon(points):
@@ -320,8 +344,8 @@ def polygon(points):
     if points[0] != points[-1]:
         points.append(points[0])
     plg = _C.create_polygon(
-            *coord,
-            outline=_penColor, width=_penSize, fill=_brushColor
+        *coord,
+        outline=_penColor, width=_penSize, fill=_brushColor
     )
     return plg
 
@@ -366,7 +390,7 @@ def coords(obj):
 
 def center(obj):
     x1, y1, x2, y2 = coords(obj)
-    return (x1+x2)/2, (y1+y2)/2
+    return (x1 + x2) / 2, (y1 + y2) / 2
 
 
 def xCoord(obj):
@@ -382,15 +406,15 @@ def yCoord(obj):
 def moveObjectTo(obj, x, y):
     x, y = transformCoord(x, y)
     coords = _C.coords(obj)
-    _C.move(obj, x-coords[0], y-coords[1])
+    _C.move(obj, x - coords[0], y - coords[1])
 
 
 def moveObjectBy(obj, dx, dy):
     if _viewPort:
         x1, x2, y1, y2 = _viewPort
         w, h = windowSize()
-        dx = dx*w/(x2 - x1)
-        dy = - dy*h/(y2 - y1)
+        dx = dx * w / (x2 - x1)
+        dy = - dy * h / (y2 - y1)
     _C.move(obj, dx, dy)
 
 
@@ -500,6 +524,7 @@ def runLoopFunc(timerCall):
         if timerCall.active:
             timerCall.func()
             _win.after(timerCall.timeInterval, timerFunc)
+
     return timerFunc
 
 
