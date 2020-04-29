@@ -30,24 +30,39 @@ circle(378, 176, 80)
 def rocket_builder(pos_x: int, pos_y: int, scale):
     penColor('black')
     brushColor(int(204 * scale), int(204 * scale), int(scale * 204))
-    polygon([(75, 72), (90, 50), (105, 72)])
-    polygon([(65, 210), (90, 155), (115, 210)])
-    rectangle(pos_x + int(75 * scale),
-              pos_y + int(72 * scale),
-              pos_x + int(105 * scale),
-              pos_y * int(185 * scale))
+    # Верхняя часть ракеты
+    head = [(-15, 22), (0, 0), (15, 22)]
+    head_is_scalled = [(int(x * scale) + pos_x, int(y * scale) + pos_y) for (x, y) in head]
+    polygon(head_is_scalled)
 
-    brushColor(int(153 * scale), int(153 * scale), int(153 * scale))
-    penColor(72, 72, 72)
-    porthole_y = 0
+    # Нижняя часть ракеты
+    nozzle = [(-25, 153), (0, 103), (25, 153)]
+    nozzle_is_scalled = [(int(x * scale) + pos_x, int(y * scale) + pos_y) for (x, y) in nozzle]
+    polygon(nozzle_is_scalled)
+
+    # Центральная часть ракеты
+    body = [(0, 22), (15, 22), (15, 131), (-15, 131), (-15, 22), (0, 22)]
+    body_is_scalled = [(int((x * scale)) + pos_x, int((y * scale)) + pos_y) for (x, y) in body]
+    polygon(body_is_scalled)
 
     # Иллюминаторы
+    brushColor(int(153 * scale), int(153 * scale), int(153 * scale))
+    penColor(int(72 * scale), int(72 * scale), int(72 * scale))
+    porthole_y = int(40 * scale)
+
     for i in range(3):
-        circle(pos_x + int(90 * scale), porthole_y + pos_y + int(90 * scale), int(10 * scale))
+        circle(pos_x, porthole_y + pos_y, int(10 * scale))
         porthole_y += int(30 * scale)
 
 
 def flame_builder(pos_x: int, pos_y: int, scale: float):
+    """Рисует пламя на основании одного полигона
+
+    :param pos_x: Координата X верхнй точки пламени
+    :param pos_y: Координата Y верхней точки пламени
+    :param scale: Масштаб пламени (0 ~ 1.0)
+
+    """
     penColor('black')
     mirror_scale = -60 * scale
     # Пламя Желтая часть
@@ -61,7 +76,7 @@ def flame_builder(pos_x: int, pos_y: int, scale: float):
     flame_yellow = [(int(x * scale), int(y * scale)) for (x, y) in flame_yellow]
     flame_yellow = [(x + pos_x, y + pos_y) for (x, y) in flame_yellow]
 
-    brushColor(255, 204, 0)  # FFCC00
+    brushColor(int(255 * scale), int(204 * scale), int(0 * scale))  # FFCC00
     curved_polygon(flame_yellow, smooth=True, splinesteps=True)
 
     # Пламя Желтая часть - Зеркальная
@@ -70,7 +85,7 @@ def flame_builder(pos_x: int, pos_y: int, scale: float):
 
     # Пламя Оранжевая часть
     flame_orange = [(x + 9 * scale, y + 70 * scale) for (x, y) in flame_yellow]
-    brushColor(255, 102, 0)  # FF6600
+    brushColor(int(scale * 255), int(scale * 102), int(scale * 0))  # FF6600
     curved_polygon(flame_orange, smooth=True, splinesteps=True)
 
     # Пламя Оранжевая часть - Зеркальная
@@ -79,7 +94,7 @@ def flame_builder(pos_x: int, pos_y: int, scale: float):
 
     # Пламя Красная часть
     flame_red = [(x + 24 * scale, y + 200 * scale) for (x, y) in flame_yellow]
-    brushColor(255, 0, 0)  # FF0000
+    brushColor(int(scale * 255), int(scale * 0), int(scale * 0))  # FF0000
     curved_polygon(flame_red, smooth=True, splinesteps=True)
 
     # Пламя Красная часть - Зеркальная
@@ -113,6 +128,19 @@ def astronaut_builder(axis):
     oval(405, 395, 427, 412)
 
 
+def pain_picture(scale: float = 1.0):
+    rocket_builder(210, 50, scale * 0.5)
+    flame_builder(224, 133, scale * 0.5)
+
+    rocket_builder(478, 131, 0.2)
+    flame_builder(484, 162, 0.2)
+
+    rocket_builder(89, 66, scale)
+    flame_builder(116, 238, scale)
+
+    astronaut_builder(412)
+
+
 # brushColor(120, 33, 33)
 # penColor(120, 33, 33)
 # arc(230, 55, 500, 281, 0, 360)
@@ -121,8 +149,5 @@ if __name__ == '__main__':
     mainWindow().bind("<Button>", callback)
     mainWindow().bind('<Motion>', motion)
 
-    rocket_builder()
-    flame_builder(119, 233, 1)
-    astronaut_builder(412)
-    astronaut_builder(412)
+    pain_picture(1)
     run()
